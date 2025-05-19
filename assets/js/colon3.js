@@ -1,11 +1,13 @@
 // inspired by insect.christmas | speed is stolen and stealed from there
 const divContainer = document.getElementById("trail-container");
+const randomChance = Math.random() * 1000;
+
 // configureationndagion
 var TRAILCONTENT = ":3";
 var TRAILAMOUNT = 70;
 const idleFramesThreshold = 100//100;
 
-var curSpeed = 0;
+var curSpeed = 1;
 var collectEnabled = true;
 
 //
@@ -15,8 +17,15 @@ var currentSpeedMode = speedModes[curSpeed];
 
 // consts
 var PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
+const DEFAULTELEMENT = PLACEHOLDER.replace("{TRAILCONTENTPLACEHOLDER}", TRAILCONTENT);
 const OFFSET = 1;
 var CONSTSPEED = 0.5;
+
+const keybinds = {
+  "o" : {"func" : () => runRand(444, false)},
+  "ö" : {"func" : () => runRand(444, false)},
+  "ArrowUp" : {"func": () => setTrail(currentElement, () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150)} || posTracker[0] || {x: 0, y: 0}}, TRAILAMOUNT + 10)}
+}
 
 // runtime shit
 // for setup
@@ -24,11 +33,12 @@ var trailHolders = [];
 // actually used | these both will be empty because we dynamically create the elements but this means you can preadd some
 var trailObjects = document.querySelectorAll(".trail");
 var posTracker = Array.from({ length: trailObjects.length }, () => ({ x: 0, y: 0 }));
+var currentElement = DEFAULTELEMENT;
 
 // track mouse pos
 var mouseTrail = [];
-mouseX = window.screen.availWidth / 2;
-mouseY = window.screen.availHeight / 2;
+var mouseX = window.screen.availWidth / 2;
+var mouseY = window.screen.availHeight / 2;
 var dropCounter = 0;
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
@@ -38,10 +48,21 @@ document.addEventListener("mousemove", (e) => {
   if (dropCounter < 2) return;
   dropCounter = 0;
   // 
-  if (mouseTrail.length > TRAILAMOUNT * (OFFSET + 2)) mouseTrail.pop();
+  if (mouseTrail.length > trailObjects.length * (OFFSET + 2)) mouseTrail.pop();
   // push to start of the array
   mouseTrail.unshift({ x: mouseX, y: mouseY });
 });
+
+document.onkeyup = (event) => {
+  var funky = keybinds[event.key]?.func || (() => {});
+  funky();
+}
+
+document.addEventListener("click", (event) => {event.pointerType !== "touch" && changeSpeedMode()});
+window.oncontextmenu = toggleCollect;
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 
 
 /* epic speeds
@@ -55,7 +76,6 @@ document.addEventListener("mousemove", (e) => {
 var disableControls = false;
 var randomPosOffset = {x: () => 0, y: () => 0};
 var speedReplacement;
-const randomChance = Math.random() * 1000;
 
 function runRand(num, first = true) {
   switch (num) {
@@ -75,6 +95,9 @@ function runRand(num, first = true) {
       TRAILAMOUNT = TRAILAMOUNT;
       TRAILCONTENT = "";
       break;
+    case 444:
+      TRAILAMOUNT = 220;
+      break;
     default:
       PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
       TRAILCONTENT = ":3";
@@ -91,21 +114,8 @@ function runRand(num, first = true) {
     setup();
   }
 }
-
 runRand(randomChance);
 
-// document.addEventListener("click", (e) => {
-//   mouseTrail = mouseTrail.map((trail, index) => {
-//     return mouseTrail[index - 1] || { x: mouseX, y: mouseY };
-//     // return { x: mouseX, y: mouseY };
-//   });
-//   // mouseTrail = new Array(mouseTrail.length).fill({ x: mouseX, y: mouseY });
-// });
-
-document.addEventListener("click", changeSpeedMode);
-window.oncontextmenu = toggleCollect;
-
-const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 var idleFrames = 0;
 var oldestMouseTrail = {x: 0, y: 0};
@@ -113,38 +123,38 @@ function update() {
   // very creative solution to merge all trails on idle
   // if (oldestMouseTrail && oldestMouseTrail == mouseTrail[0]) mouseTrail.pop();
   // oldestMouseTrail = mouseTrail[0];
-
-  
-  // if (collectEnabled && idleFrames > 100) {
-  //     posTracker = posTracker.map((trail, index) => {
-  //       return posTracker[index - 1] || { x: mouseX, y: mouseY };
-  //       // return { x: mouseX, y: mouseY };
-  //     });
-  // }
-
   
   posTracker.forEach((pos, index) => {
     trailObject = trailObjects[index];
 
     speed = getSpeed();
-    // first trailObject will follow the mouse (directly looks like shortest path), others will follow the leader :3
-    // const target = index === 0 ? { x: mouseX, y: mouseY } : posTracker[index - 1];
-    // follow mouse path not just directly (looks epicer)
-    var target = mouseTrail[index * OFFSET] || mouseTrail[0] || { x: pos.x, y: pos.y };
+    // this decides how they collect at the start
+    var target = mouseTrail[index * OFFSET] || { x: pos.x, y: pos.y };
+
     // random funni
     target.x += randomPosOffset.x();
     target.y += randomPosOffset.y();
 
     // for collect
-    if (collectEnabled && posTracker[(index - 1) * OFFSET] && idleFrames > idleFramesThreshold) {
+    if (collectEnabled && index > 0 && idleFrames > idleFramesThreshold) {
+      if (index == 100) console.log(`${mouseTrail.length} t: ${posTracker[index - 1].x}, ${posTracker[index - 1].y} | m: ${mouseTrail[(index - 1) * OFFSET].x}, ${mouseTrail[(index - 1) * OFFSET].y}`)
+      // mouseTrail = []
       target = posTracker[(index - 1) * OFFSET];
+      // posTracker[index * OFFSET] = posTracker[(index - 1) * OFFSET];
+      // target = mouseTrail[(index - 1) * OFFSET];
+      
       mouseTrail[index * OFFSET] = target;//mouseTrail[(index - 1) * OFFSET] = target;
+      // speed = 0.01
+
       speed = Math.max(0.01, 0.05 / index);//Math.max(0.05, 0.1 / index);//
       // idleFrames = 0;
     }
 
+
     pos.x += (target.x - pos.x) * speed;
     pos.y += (target.y - pos.y) * speed;
+    // if (collectEnabled && index > 0 && idleFrames > idleFramesThreshold)
+    // mouseTrail[index * OFFSET] = pos;
 
     trailObject.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
   });
@@ -195,13 +205,22 @@ function toggleCollect() {
 
 
 // setup shit
-// read :3 (creates trail elements on the page)
-function setupTrailObjects(trailContent, trailAmount) {
-  trailHolders = [];
-  trailObjects = [];
+function setTrail(trailElement, pos, size = 0, replace = true) {
+  currentElement = trailElement;
 
-  for (let i = 0; i < trailAmount; i++) {
-    trailObject = PLACEHOLDER.replace("{TRAILCONTENTPLACEHOLDER}", trailContent);
+  if (replace) {
+    trailObjects = document.querySelectorAll(".trail");
+    trailObjects.forEach((element, index) => {
+      element = trailElement;
+    });
+    posTracker = Array.from({ length: trailObjects.length }, () => (pos()));
+    trailObjects.forEach((trailObject, index) => {
+      trailObject.style.opacity = Math.max(1 - index / (trailObjects.length - 1), 0.005);
+    });
+  }
+
+  for (let i = 0; i < size; i++) {
+    trailObject = trailElement.replace(":3", trailObjects.length + i);
     trailHolders.push(trailObject);
   }
 
@@ -210,14 +229,33 @@ function setupTrailObjects(trailContent, trailAmount) {
   });
 
   trailObjects = document.querySelectorAll(".trail");
-  posTracker = Array.from({ length: trailObjects.length }, () => ({ x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }));
+  posTracker = Array.from({ length: trailObjects.length }, () => (pos()));
+  setupOpacity(trailObjects);
+  TRAILAMOUNT = trailObjects.length;
+}
 
-  trailObjects.forEach((trailObject, index) => {
-    trailObject.style.opacity = Math.max(1 - index / (TRAILAMOUNT - 1), 0.005);
+function setupOpacity(objects) {
+  objects.forEach((object, index) => {
+    object.style.opacity = Math.max(1 - index / (objects.length - 1), 0.005);
   });
 }
 
+// read :3 (creates trail elements on the page)
+function setupTrailObjects(trailContent, trailAmount) {
+  var randomScreenPos = () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }};
+  setTrail(currentElement, randomScreenPos, trailAmount, false);
+  // setTrail(trailElement);
+  
+
+  trailObjects = document.querySelectorAll(".trail");
+  posTracker = Array.from({ length: trailObjects.length }, () => (randomScreenPos()));
+
+  setupOpacity(trailObjects);
+}
+
 function setup() {
+  trailHolders = [];
+  trailObjects = [];
   setupTrailObjects(TRAILCONTENT, TRAILAMOUNT);
   update();
 }

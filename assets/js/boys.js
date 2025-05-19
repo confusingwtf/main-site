@@ -1,7 +1,7 @@
 
 var isSetup = false;
 
-const oldRan = randomChance;
+// const oldRan = randomChance;
 var epicTogle = false
 const imageDir = "/assets/img/meow";
 const BOYKISSER = '<img src="assets/img/boykisser.svg" onclick="epicTogle = !epicTogle; runRand((epicTogle) ? 69 : oldRan, false)" width="75" style="float: right"></img>';
