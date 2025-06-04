@@ -24,7 +24,7 @@ var CONSTSPEED = 0.5;
 const keybinds = {
   "o" : {"func" : () => runRand(444, false)},
   "ö" : {"func" : () => runRand(444, false)},
-  "ArrowUp" : {"func": () => setTrail(currentElement, () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150)} || posTracker[0] || {x: 0, y: 0}}, TRAILAMOUNT + 10)}
+  "ArrowUp" : {"func": () => setTrail(currentElement, () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150)} || posTracker[0] || {x: 0, y: 0}}, 10)}
 }
 
 // runtime shit
@@ -207,9 +207,9 @@ function toggleCollect() {
 // setup shit
 function setTrail(trailElement, pos, size = 0, replace = true) {
   currentElement = trailElement;
+  trailObjects = document.querySelectorAll(".trail");
 
   if (replace) {
-    trailObjects = document.querySelectorAll(".trail");
     trailObjects.forEach((element, index) => {
       element = trailElement;
     });

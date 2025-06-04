@@ -4,7 +4,7 @@ var isSetup = false;
 // const oldRan = randomChance;
 var epicTogle = false
 const imageDir = "/assets/img/meow";
-const BOYKISSER = '<img src="assets/img/boykisser.svg" onclick="epicTogle = !epicTogle; runRand((epicTogle) ? 69 : oldRan, false)" width="75" style="float: right"></img>';
+const BOYKISSER = '<img src="assets/img/boykisser.svg" onclick="epicTogle = !epicTogle; runRand((epicTogle) ? 69 : oldRan, false)" width="75" style="float: right; user-select: none; -moz-user-select: none;"></img>';
 const RANDOMIMAGE = '<img src="{IMAGEDIRPLACEHOLDER}/{RANDOMIMAGEPLACEHOLDER}" width="75" style="float: right"></img>';
 
 
