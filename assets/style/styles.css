@@ -79,7 +79,7 @@ body {
   opacity: 0.5;
 }
 
-iframe {
+.disableshit {
   pointer-events: none;
 }
 

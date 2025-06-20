@@ -1,6 +1,17 @@
+String.prototype.reverse = function() {
+  var s = "";
+  var i = this.length;
+  while (i>0) {
+      s += this.substring(i-1,i);
+      i--;
+  }
+  return s;
+}
+
 // inspired by insect.christmas | speed is stolen and stealed from there
 const divContainer = document.getElementById("trail-container");
-const randomChance = Math.random() * 1000;
+const mainTable = document.getElementById("main-table");
+const randomChance = Math.floor(Math.random() * 1000);
 
 // configureationndagion
 var TRAILCONTENT = ":3";
@@ -16,7 +27,8 @@ var speedModes = ["constant", "trailing", "tomfoolery"];
 var currentSpeedMode = speedModes[curSpeed];
 
 // consts
-var PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
+// var PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
+var PLACEHOLDER = '<img src="assets/img/spiny.gif" width="100" class="trail"></img>';
 const DEFAULTELEMENT = PLACEHOLDER.replace("{TRAILCONTENTPLACEHOLDER}", TRAILCONTENT);
 const OFFSET = 1;
 var CONSTSPEED = 0.5;
@@ -53,7 +65,18 @@ document.addEventListener("mousemove", (e) => {
   mouseTrail.unshift({ x: mouseX, y: mouseY });
 });
 
+
+var keylogger = [];
+var passwordString = "";
+var lastToggled = "";
 document.onkeyup = (event) => {
+  lastToggled = "";
+  if (keylogger.length == 20) keylogger.pop();
+  keylogger.unshift(event.key);
+  passwordString = keylogger.join("").reverse();
+  console.log(passwordString);
+  
+  
   var funky = keybinds[event.key]?.func || (() => {});
   funky();
 }
@@ -67,15 +90,61 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* epic speeds
 // laser speed lmao leave trails behind
-// speedReplacement = () => {return Math.min(1.2, (Math.random() * 200) / 100)}
+// speedReplacement = (target, pos) => {return Math.min(1.2, (Math.random() * 200) / 100)}
 // gpu split
-// speedReplacement = () => {return Math.max(1.2, (Math.random() * 2) + 1)}
+// speedReplacement = (target, pos) => {return Math.max(1.2, (Math.random() * 2) + 1)}
 */
 
 // funni meme
 var disableControls = false;
 var randomPosOffset = {x: () => 0, y: () => 0};
-var speedReplacement;
+var speedReplacement = null;
+// speedReplacement = (target, pos) => {return pos.x}
+
+var posReplacement = null;
+// posReplacement = (target, pos, speed, totalFrames) => {return {x: totalFrames % screen.availWidth, y: (totalFrames % screen.availHeight)}};
+
+var velocity = {x: 1.5, y: 1.5}
+// var velocity = {x: 0, y: 1}
+// var velocity = {x: 0, y: 0};
+var DAMPANEING = 0.99
+var enableTableBounds = false;
+var posReplacementDVD = (index, target, pos, speed, totalFrames) => {
+  var borderHeight = screen.availHeight - 150;
+  var borderWidth = screen.availWidth - 75;
+  frameCounter = totalFrames % 1000
+
+  if (pos.x >= borderWidth || pos.x <= 0) {
+    velocity = {x: (pos.x >= borderWidth) ? (-Math.abs(velocity.x)) : Math.abs(velocity.x), y: (velocity.y)}
+    
+    // ohhh its so damp :333
+    // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
+  }
+
+  if (pos.y >= borderHeight || pos.y <= 0 ) {
+    velocity = {x: velocity.x, y: (pos.y >= borderHeight) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
+    
+    // ohhh its so damp :333
+    // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
+  }
+
+  if (enableTableBounds) {
+    var tableBounds = mainTable.getBoundingClientRect();
+
+    // && pos.y < top && pos.y > bottom
+    if (pos.x > tableBounds.left && pos.x < tableBounds.right && pos.y > tableBounds.top && pos.y < tableBounds.bottom) {
+      velocity = {x: (pos.x >= tableBounds.left) ? (-Math.abs(velocity.x)) : Math.abs(velocity.x), y: (pos.y >= tableBounds.top) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
+      console.log()
+      
+      // ohhh its so damp :333
+      // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
+    }
+  }
+
+  console.log(`${index}: ${pos.x}/${velocity.x}, ${pos.y}/${velocity.y} | ${screen.availHeight}`)
+  return {x: pos.x += velocity.x, y: pos.y += velocity.y};
+}
+
 
 function runRand(num, first = true) {
   switch (num) {
@@ -101,7 +170,7 @@ function runRand(num, first = true) {
     default:
       PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
       TRAILCONTENT = ":3";
-      speedReplacement = null;
+      // speedReplacement = null;
       randomPosOffset = {x: () => 0, y: () => 0};
       disableControls = false;
       break;
@@ -116,10 +185,14 @@ function runRand(num, first = true) {
 }
 runRand(randomChance);
 
+var dvdToggle = false;
+var funniDVDToggle = false
 
+var totalFrames = 0
 var idleFrames = 0;
 var oldestMouseTrail = {x: 0, y: 0};
 function update() {
+  totalFrames += 1
   // very creative solution to merge all trails on idle
   // if (oldestMouseTrail && oldestMouseTrail == mouseTrail[0]) mouseTrail.pop();
   // oldestMouseTrail = mouseTrail[0];
@@ -127,7 +200,6 @@ function update() {
   posTracker.forEach((pos, index) => {
     trailObject = trailObjects[index];
 
-    speed = getSpeed();
     // this decides how they collect at the start
     var target = mouseTrail[index * OFFSET] || { x: pos.x, y: pos.y };
 
@@ -135,11 +207,14 @@ function update() {
     target.x += randomPosOffset.x();
     target.y += randomPosOffset.y();
 
+    speed = getSpeed(target, pos);
+
     // for collect
     if (collectEnabled && index > 0 && idleFrames > idleFramesThreshold) {
       if (index == 100) console.log(`${mouseTrail.length} t: ${posTracker[index - 1].x}, ${posTracker[index - 1].y} | m: ${mouseTrail[(index - 1) * OFFSET].x}, ${mouseTrail[(index - 1) * OFFSET].y}`)
       // mouseTrail = []
       target = posTracker[(index - 1) * OFFSET];
+      // pos = target;
       // posTracker[index * OFFSET] = posTracker[(index - 1) * OFFSET];
       // target = mouseTrail[(index - 1) * OFFSET];
       
@@ -150,9 +225,20 @@ function update() {
       // idleFrames = 0;
     }
 
+    var tableBounds = mainTable.getBoundingClientRect();
+    if (target.x > tableBounds.left && target.x < tableBounds.right && target.y > tableBounds.top && target.y < tableBounds.bottom) {
+      velocity = {x: velocity.x, y: (target.y >= tableBounds.left) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
+      console.log("meow")
+      
+      // ohhh its so damp :333
+      // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
+    }
+  
+    // pos = {x: target.x += velocity.x, y: target.y += velocity.y};
 
-    pos.x += (target.x - pos.x) * speed;
-    pos.y += (target.y - pos.y) * speed;
+    pos = applyPos(index, target, pos, speed, totalFrames)
+    
+    
     // if (collectEnabled && index > 0 && idleFrames > idleFramesThreshold)
     // mouseTrail[index * OFFSET] = pos;
 
@@ -170,12 +256,21 @@ function update() {
   }
   oldestMouseTrail = mouseTrail[0];
 
+  passCheck();
+
   // this calls the callback on the monitors refresh rate, pretty epic | not called on unfocus
   requestAnimationFrame(update);
 }
 
-function getSpeed() {
-  if (speedReplacement) return speedReplacement();
+function applyPos(index, target, pos, speed, totalFrames) {
+  if (posReplacement) return posReplacement(index, target, pos, speed, totalFrames);
+  pos.x += (target.x - pos.x) * speed;
+  pos.y += (target.y - pos.y) * speed;
+  return pos;
+}
+
+function getSpeed(target, pos) {
+  if (speedReplacement) return speedReplacement(target, pos);
   switch (currentSpeedMode) {
     case "trailing":
       speed = Math.random() * (0.1 - 0.01) + 0.01;
@@ -203,6 +298,24 @@ function toggleCollect() {
   collectEnabled = !collectEnabled;
 }
 
+function passCheck() {
+  if (passwordString.endsWith("iluvluma")) {
+    lastToggled = "iluvluma";
+    dvdToggle = !dvdToggle;
+    enableTableBounds = false;
+    posReplacement = (dvdToggle) ? posReplacementDVD : null;
+  } else if (lastToggled = "iluvluma") {
+    dvdToggle = false;
+    enableTableBounds = true;
+    posReplacement = null;
+  }
+
+  if (passwordString.endsWith("me0w") && lastToggled !== "me0w") {
+    lastToggled = "me0w";
+    dvdToggle = !dvdToggle;
+    posReplacement = (dvdToggle) ? posReplacementDVD : null;
+  }
+}
 
 // setup shit
 function setTrail(trailElement, pos, size = 0, replace = true) {
@@ -242,7 +355,8 @@ function setupOpacity(objects) {
 
 // read :3 (creates trail elements on the page)
 function setupTrailObjects(trailContent, trailAmount) {
-  var randomScreenPos = () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }};
+  // var randomScreenPos = () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }};
+  var randomScreenPos = () => {return {x: screen.availWidth / 2, y: screen.availHeight / 2 + 50}}
   setTrail(currentElement, randomScreenPos, trailAmount, false);
   // setTrail(trailElement);
   
