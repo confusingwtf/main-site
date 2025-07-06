@@ -1,3 +1,5 @@
+const DEBUG = false;
+
 String.prototype.reverse = function() {
   var s = "";
   var i = this.length;
@@ -27,8 +29,8 @@ var speedModes = ["constant", "trailing", "tomfoolery"];
 var currentSpeedMode = speedModes[curSpeed];
 
 // consts
-// var PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
-var PLACEHOLDER = '<img src="assets/img/spiny.gif" width="100" class="trail"></img>';
+var PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
+// var PLACEHOLDER = '<img src="assets/img/spiny.gif" width="100" class="trail"></img>';
 const DEFAULTELEMENT = PLACEHOLDER.replace("{TRAILCONTENTPLACEHOLDER}", TRAILCONTENT);
 const OFFSET = 1;
 var CONSTSPEED = 0.5;
@@ -87,18 +89,19 @@ window.oncontextmenu = toggleCollect;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 
-
+var speedReplacement = null;
 /* epic speeds
 // laser speed lmao leave trails behind
 // speedReplacement = (target, pos) => {return Math.min(1.2, (Math.random() * 200) / 100)}
 // gpu split
 // speedReplacement = (target, pos) => {return Math.max(1.2, (Math.random() * 2) + 1)}
 */
+// speedReplacement = (target, pos) => {return Math.min(1.2, (Math.random() * 200) / 100)}
+// speedReplacement = (target, pos) => {return Math.max(1.2, (Math.random() * 2) + 1)}
 
 // funni meme
 var disableControls = false;
 var randomPosOffset = {x: () => 0, y: () => 0};
-var speedReplacement = null;
 // speedReplacement = (target, pos) => {return pos.x}
 
 var posReplacement = null;
@@ -151,8 +154,8 @@ function runRand(num, first = true) {
     case 123:
       disableControls = true;
       collectEnabled = false;
-      CONSTSPEED = 2;
-      // speedReplacement = () => {return Math.random() > 0.5 ? 2 : 1.9}
+      // CONSTSPEED = 2;
+      speedReplacement = () => {return Math.random() > 0.5 ? 2 : 1.9}
       TRAILAMOUNT = 900//750;
       TRAILCONTENT = "?";
       randomPosOffset.x = () => { let rand = Math.random() * 0.1; return Math.random() > 0.5 ? rand : -rand};
@@ -175,6 +178,7 @@ function runRand(num, first = true) {
       disableControls = false;
       break;
   }
+  currentElement = PLACEHOLDER.replace("{TRAILCONTENTPLACEHOLDER}", TRAILCONTENT);
 
   // reinit | move to func eventually
   if (!first) {
@@ -228,7 +232,7 @@ function update() {
     var tableBounds = mainTable.getBoundingClientRect();
     if (target.x > tableBounds.left && target.x < tableBounds.right && target.y > tableBounds.top && target.y < tableBounds.bottom) {
       velocity = {x: velocity.x, y: (target.y >= tableBounds.left) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
-      console.log("meow")
+      // console.log("meow | bounds hit")
       
       // ohhh its so damp :333
       // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
@@ -304,7 +308,7 @@ function passCheck() {
     dvdToggle = !dvdToggle;
     enableTableBounds = false;
     posReplacement = (dvdToggle) ? posReplacementDVD : null;
-  } else if (lastToggled = "iluvluma") {
+  } else if (lastToggled == "iluvluma") {
     dvdToggle = false;
     enableTableBounds = true;
     posReplacement = null;
@@ -333,7 +337,8 @@ function setTrail(trailElement, pos, size = 0, replace = true) {
   }
 
   for (let i = 0; i < size; i++) {
-    trailObject = trailElement.replace(":3", trailObjects.length + i);
+    trailObject = trailElement//.replace(":3", trailObjects.length + i);
+    if (DEBUG) trailObject = trailElement.replace(":3", trailObjects.length + i);
     trailHolders.push(trailObject);
   }
 
@@ -355,8 +360,8 @@ function setupOpacity(objects) {
 
 // read :3 (creates trail elements on the page)
 function setupTrailObjects(trailContent, trailAmount) {
-  // var randomScreenPos = () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }};
-  var randomScreenPos = () => {return {x: screen.availWidth / 2, y: screen.availHeight / 2 + 50}}
+  var randomScreenPos = () => {return {x: Math.random() * mouseX * Math.max(3, TRAILAMOUNT / 150), y: Math.random() * mouseY * Math.max(3, TRAILAMOUNT / 150) }};
+  // var randomScreenPos = () => {return {x: screen.availWidth / 2, y: screen.availHeight / 2 + 50}}
   setTrail(currentElement, randomScreenPos, trailAmount, false);
   // setTrail(trailElement);
   
