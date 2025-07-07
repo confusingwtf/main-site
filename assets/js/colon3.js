@@ -68,6 +68,7 @@ document.addEventListener("mousemove", (e) => {
 });
 
 
+// need to fix it also reverses the key strings like Control, reverse the event.key then reverse the list maybe?
 var keylogger = [];
 var passwordString = "";
 var lastToggled = "";

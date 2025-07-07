@@ -8,7 +8,8 @@ const baseDir = "/assets/meow";
 const BOYKISSER = '<img src="assets/img/boykisser.svg" onclick="epicTogle = !epicTogle; runRand((epicTogle) ? 69 : oldRan, false)" width="75" style="float: right; user-select: none; -moz-user-select: none;"></img>';
 const RANDOMIMAGE = '<img src="{BASEDIRPLACEHOLDER}/{RANDOMIMAGEPLACEHOLDER}" width="75" style="float: right"></img>';
 // could add var onvidend, return in setupelem so rolls cant happen until vid finished, maybe setup dict, certain longer vids can be skipped/rerolled and ignore var some cant some loop
-const RANDOMVID = '<video id="funni-vid" autoplay meow onloadstart="this.volume=0.3;lastVidEnded=false" src="{BASEDIRPLACEHOLDER}/{RANDOMVIDPLACEHOLDER}" poster="{BASEDIRPLACEHOLDER}/{RANDOMPOSTERPLACEHOLDER}" width="125" style="float: right"></video>';
+//poster="{BASEDIRPLACEHOLDER}/{RANDOMPOSTERPLACEHOLDER}"
+const RANDOMVID = '<video id="funni-vid" autoplay meow onloadstart="this.volume=0.3;lastVidEnded=false" src="{BASEDIRPLACEHOLDER}/{RANDOMVIDPLACEHOLDER}" poster="/assets/img/spiny.gif" width="125" style="float: right"></video>';
 var clicked = false;
 
 var missedCombo = 0;
@@ -39,6 +40,25 @@ function dragImage() {
     
 }
 
+// :/
+const hardcoded = [
+    "https://files.catbox.moe/2j1aqb.mp4",
+    "https://files.catbox.moe/ns381m.mp4",
+    "https://files.catbox.moe/8swf0h.mp4",
+    "https://files.catbox.moe/nh1eiq.mp4",
+    "https://files.catbox.moe/exp3ok.mp4",
+    "https://files.catbox.moe/exp3ok.mp4",
+    "https://files.catbox.moe/fpd954.mp4",
+    // "https://files.catbox.moe/mjv611.mp4", // catbox didnt like the funni webm?
+    "https://files.catbox.moe/xbnud9.mp4",
+    "https://files.catbox.moe/ufh9ht.mp4",
+    "https://files.catbox.moe/zxl0nc.mp4",
+    "https://files.catbox.moe/fmpx5u.mp4",
+    "https://files.catbox.moe/a471y5.mp4"
+]
+function badInternetTranslation(filePath) {
+    return hardcoded[filePath.split("/")[1].replace(".mp4", "").replace(".funni", "")]
+}
 
 //<img> tag is both img and gif/webm so
 function getRandomImage() {
@@ -117,6 +137,9 @@ function setupElem() {
     var placeholderFunc = (mediaChoice == RANDOMVID) ? getRandomVid : getRandomImage;
     var randItem = placeholderFunc();
 
+    // :/
+    randItem = badInternetTranslation(randItem);
+
     // dont end
     if (DEBUG && BUGGIN && !lastVidEnded) return;
 
@@ -125,6 +148,9 @@ function setupElem() {
     element = element.replace("{RANDOMPOSTERPLACEHOLDER}", getRandomImage());
     // console.log(element)
     // console.log(funniContainer)
+
+    // :/
+    element = element.replace(`src="${baseDir}/`, 'src="')
     
 
     funniContainer.innerHTML = element;
