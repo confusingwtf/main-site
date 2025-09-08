@@ -47,14 +47,14 @@ const hardcoded = [
     "https://files.catbox.moe/8swf0h.mp4",
     "https://files.catbox.moe/nh1eiq.mp4",
     "https://files.catbox.moe/exp3ok.mp4",
-    "https://files.catbox.moe/exp3ok.mp4",
     "https://files.catbox.moe/fpd954.mp4",
     // "https://files.catbox.moe/mjv611.mp4", // catbox didnt like the funni webm?
     "https://files.catbox.moe/xbnud9.mp4",
     "https://files.catbox.moe/ufh9ht.mp4",
     "https://files.catbox.moe/zxl0nc.mp4",
     "https://files.catbox.moe/fmpx5u.mp4",
-    "https://files.catbox.moe/a471y5.mp4"
+    "https://files.catbox.moe/a471y5.mp4",
+    "https://files.catbox.moe/ry3icg.mp4"
 ]
 function badInternetTranslation(filePath) {
     return hardcoded[filePath.split("/")[1].replace(".mp4", "").replace(".funni", "")]
@@ -71,7 +71,7 @@ function getRandomImage() {
 const mraow = 2;
 const BUGGIN = true;
 function getRandomVid() {
-    const index = (!DEBUG || !BUGGIN) ? Math.round(Math.random() * 100) % 11 : mraow; // & numOfFiles#
+    const index = (!DEBUG || !BUGGIN) ? Math.round(Math.random() * 100) % hardcoded.length : mraow //12 : mraow; // & numOfFiles#
     // no repeats :3
     if (index == lastVidIndex && index !== mraow) {
         console.log("boring... reroll vid");
@@ -156,9 +156,11 @@ function setupElem() {
     funniContainer.innerHTML = element;
 
     const vid = document.getElementById("funni-vid");
-    vid.onended = () => {
-        vid.style.display = "none";
-        lastVidEnded = true;
+    if (vid) {
+        vid.onended = () => {
+            vid.style.display = "none";
+            lastVidEnded = true;
+        }
     }
     // funniContainer.appendChild(element);
 }

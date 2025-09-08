@@ -10,6 +10,8 @@ String.prototype.reverse = function() {
   return s;
 }
 
+debugLog = (...args) => (DEBUG) ? console.log(...args) : undefined
+
 // inspired by insect.christmas | speed is stolen and stealed from there
 const divContainer = document.getElementById("trail-container");
 const mainTable = document.getElementById("main-table");
@@ -20,12 +22,12 @@ var TRAILCONTENT = ":3";
 var TRAILAMOUNT = 70;
 const idleFramesThreshold = 100//100;
 
-var curSpeed = 1;
+var curSpeed = 0;
 var collectEnabled = true;
 
 //
 var speed = 0.5;
-var speedModes = ["constant", "trailing", "tomfoolery"];
+var speedModes = ["trailing", "constant"];
 var currentSpeedMode = speedModes[curSpeed];
 
 // consts
@@ -54,6 +56,7 @@ var mouseTrail = [];
 var mouseX = window.screen.availWidth / 2;
 var mouseY = window.screen.availHeight / 2;
 var dropCounter = 0;
+// iluvluma mode dont add new mouse events if its still same place so dvd doesnt fuck up?
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
@@ -66,6 +69,7 @@ document.addEventListener("mousemove", (e) => {
   // push to start of the array
   mouseTrail.unshift({ x: mouseX, y: mouseY });
 });
+// document.addEventListener("resize", (e) => {});
 
 
 // need to fix it also reverses the key strings like Control, reverse the event.key then reverse the list maybe?
@@ -73,12 +77,13 @@ var keylogger = [];
 var passwordString = "";
 var lastToggled = "";
 document.onkeyup = (event) => {
+  if (DEBUG && e.key == "`") debugger;
   lastToggled = "";
   if (keylogger.length == 20) keylogger.pop();
-  keylogger.unshift(event.key);
+  //cursed
+  keylogger.unshift(event.key.reverse());
   passwordString = keylogger.join("").reverse();
   console.log(passwordString);
-  
   
   var funky = keybinds[event.key]?.func || (() => {});
   funky();
@@ -114,8 +119,8 @@ var velocity = {x: 1.5, y: 1.5}
 var DAMPANEING = 0.99
 var enableTableBounds = false;
 var posReplacementDVD = (index, target, pos, speed, totalFrames) => {
-  var borderHeight = screen.availHeight - 150;
-  var borderWidth = screen.availWidth - 75;
+  var borderHeight = window.innerHeight - 150;
+  var borderWidth = window.innerWidth - 75;
   frameCounter = totalFrames % 1000
 
   if (pos.x >= borderWidth || pos.x <= 0) {
@@ -138,14 +143,14 @@ var posReplacementDVD = (index, target, pos, speed, totalFrames) => {
     // && pos.y < top && pos.y > bottom
     if (pos.x > tableBounds.left && pos.x < tableBounds.right && pos.y > tableBounds.top && pos.y < tableBounds.bottom) {
       velocity = {x: (pos.x >= tableBounds.left) ? (-Math.abs(velocity.x)) : Math.abs(velocity.x), y: (pos.y >= tableBounds.top) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
-      console.log()
+      debugLog();
       
       // ohhh its so damp :333
       // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
     }
   }
 
-  console.log(`${index}: ${pos.x}/${velocity.x}, ${pos.y}/${velocity.y} | ${screen.availHeight}`)
+  debugLog(`${index}: ${pos.x}/${velocity.x}, ${pos.y}/${velocity.y} | ${screen.availHeight}`)
   return {x: pos.x += velocity.x, y: pos.y += velocity.y};
 }
 
@@ -196,6 +201,21 @@ var funniDVDToggle = false
 var totalFrames = 0
 var idleFrames = 0;
 var oldestMouseTrail = {x: 0, y: 0};
+
+// var spliced = false;
+// setInterval(() => {
+//   console.log(idleFrames)
+//   if (lastToggled == "iluvluma" && idleFrames > 300) {//mouseTrail[0] && mouseTrail[0].x == mouseX && mouseTrail[0].y == mouseY) {
+//     if (!spliced) {
+//       mouseTrail.splice(0, 2);
+//       console.log(`t: ${mouseTrail.length}`)
+//       spliced = true;
+//     }
+//   } else {
+//     spliced = false;
+//   }
+// }, 1000)
+
 function update() {
   totalFrames += 1
   // very creative solution to merge all trails on idle
@@ -216,7 +236,7 @@ function update() {
 
     // for collect
     if (collectEnabled && index > 0 && idleFrames > idleFramesThreshold) {
-      if (index == 100) console.log(`${mouseTrail.length} t: ${posTracker[index - 1].x}, ${posTracker[index - 1].y} | m: ${mouseTrail[(index - 1) * OFFSET].x}, ${mouseTrail[(index - 1) * OFFSET].y}`)
+      if (index == 100) debugLog(`${mouseTrail.length} t: ${posTracker[index - 1].x}, ${posTracker[index - 1].y} | m: ${mouseTrail[(index - 1) * OFFSET].x}, ${mouseTrail[(index - 1) * OFFSET].y}`)
       // mouseTrail = []
       target = posTracker[(index - 1) * OFFSET];
       // pos = target;

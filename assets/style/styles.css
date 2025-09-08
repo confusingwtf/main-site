@@ -122,3 +122,12 @@ th:empty,
 td:empty {
   display: none;
 }
+
+.webring-container {
+  /* margin: 0 45%; */
+  width: 100%;
+  position: fixed;
+  display: grid;
+  justify-items: center;
+  bottom: 2%;
+}
