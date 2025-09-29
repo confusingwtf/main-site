@@ -10,7 +10,7 @@
             <div class="disc-profile-main">
                 <h2 class="disc-profile-display">^display^</h2>
                 <div class="disc-spotify">
-                    <img class="disc-spotify-img" src=^spotify-song-img^ height="32" width="32" />
+                    <img class="disc-spotify-img" src=^spotify-song-img^ height="32" width="32" onerror="this.style.display='none';"/>
                     
                     <div class="disc-spotify-main">
                         <span class="disc-spotify-name">^spotify-song-name^</span>
