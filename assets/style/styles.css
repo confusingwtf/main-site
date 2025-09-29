@@ -131,3 +131,50 @@ td:empty {
   justify-items: center;
   bottom: 2%;
 }
+
+
+
+.disc-profile {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  /* width: max-content; */
+  padding: 0px 15px 0px 15px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-items: center;
+}
+.disc-profile-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+}
+.disc-profile-avatar {
+  border-radius: 50%;
+  padding: 10px;
+}
+.disc-profile-display {
+  margin-bottom: 2px;
+}
+
+.disc-spotify {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0px 5px 0px;
+}
+.disc-spotify-main {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.disc-spotify-name {
+}
+.disc-spotify-artist {
+  /* padding-left: 42px; */
+}
+.disc-spotify-img {
+  border-radius: 50%;
+}
