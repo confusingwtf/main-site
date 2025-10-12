@@ -178,3 +178,10 @@ td:empty {
 .disc-spotify-img {
   border-radius: 50%;
 }
+
+.twitter-button {
+  position: absolute;
+  /* float: right; */
+  top: 20px;
+  right: 25px;
+}
