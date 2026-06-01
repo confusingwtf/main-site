@@ -26,6 +26,13 @@ body {
   /* scrollbar-width: none; Firefox */
 }
 
+textarea, textarea:focus {
+  height: 60px;
+  height: 60px;
+  background: none;
+  outline: none;
+}
+
 /* body::-webkit-scrollbar {
   display: none;
 } */
@@ -42,19 +49,53 @@ body {
 }
 
 .centerFull {
-  margin: auto;
+  margin: auto auto;
   top: 50%;
   position: absolute;
   left: 50%;
   -ms-transform: translateY(-50%) translateX(-50%);
   transform: translateY(-50%) translateX(-50%);
   /* width: 50%; */
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+}
+/* .activity-container {
+  margin: 15px 0px;
+  border: 1px solid rgb(255, 255, 255) */
+/* } */
+
+.table-container {
   border: 1px solid rgb(255, 255, 255);
   padding: 50px;
 }
 
-.scary-ghost {
-  stroke: rgb(255, 255, 255);
+.profile-container {
+  float: right;
+  z-index: 3;
+}
+
+.main {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(1px);
+  width: 75%;
+  height: 65%;
+  border: 1px solid rgb(255, 255, 255);
+  padding: 50px;
+  z-index: 1;
+  display: flex;
+}
+
+.ascii {
+  font-family: monospace;
+  white-space: pre;
+  width:min-content;
+  text-align: left;
+  line-height: 1.15;
 }
 
 .icon-container {
@@ -137,13 +178,15 @@ td:empty {
 
 .disc-profile {
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); */
   /* width: max-content; */
-  padding: 0px 15px 0px 15px;
+  padding: 0px 5px;
   display: flex;
   gap: 2px;
   align-items: center;
   justify-items: center;
+  z-index: 2;
+  position: relative;
 }
 .disc-profile-body {
   display: flex;
@@ -152,11 +195,11 @@ td:empty {
   align-items: center;
   justify-items: center;
 }
-.disc-profile-avatar {
+.disc-profile img {
   border-radius: 50%;
   padding: 10px;
 }
-.disc-profile-display {
+.disc-profile h2 {
   margin-bottom: 2px;
 }
 
@@ -165,6 +208,10 @@ td:empty {
   align-items: center;
   gap: 10px;
   padding: 5px 0px 5px 0px;
+  max-width: 250px;
+  max-height: 50px;
+  /* text-wrap: wrap; */
+  overflow: hidden; 
 }
 .disc-spotify-main {
   display: flex;
@@ -176,13 +223,113 @@ td:empty {
 .disc-spotify-artist {
   /* padding-left: 42px; */
 }
-.disc-spotify-img {
+.disc-spotify img {
   border-radius: 50%;
+  padding: 1px;
 }
 
+.disc-profile-main {
+}
 .twitter-button {
   position: absolute;
   /* float: right; */
-  top: 20px;
-  right: 25px;
+  top: 5px;
+  right: 5px;
 }
+
+.disc-activity {
+  margin: 15px 0px;
+  border: 1px solid rgb(255, 255, 255);
+  background-color: rgba(0, 0, 0, 0.5);
+  /* backdrop-filter: blur(5px); */
+  /* width: max-content; */
+  padding: 4px 5px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-items: center;
+  z-index: 2;
+}
+.disc-activity-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+}
+.disc-activity-main {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+  margin: 10px;
+}
+.disc-activity-icons {
+  position: relative;
+  display: inline;
+}
+.disc-activity img {
+  /* padding: 10px 0px; */
+}
+.disc-activity-small {
+  border-radius: 50%;
+  padding: 0px;
+  position: absolute;
+  bottom: -5px;
+  right: -13px;
+  border: 3px solid #ffffff22;
+  /* border: 3px solid #8080ffaa; */
+  /* bottom: 4px;
+  right: 2px */
+}
+.disc-activity h2 {
+  margin: 5px 0px;
+}
+.disc-activity h3 {
+  margin: 2px;
+}
+
+.tab-selection {
+  width: 100%;
+}
+
+.ring {
+    margin: auto;
+    margin-top: 43.6%;
+    text-align: center;
+    color: #666;
+}
+
+.ring a { color: #888; }
+.ring a:hover { color: #d1aad1; }
+
+.tab {
+  display: none;
+  border: 1px solid;
+  padding: 20px;
+  margin-top: 20px;
+  height: 75%;
+}
+
+.project {
+  margin-bottom: 10px;
+  border: 1px solid;
+  width: fit-content;
+  padding: 10px;
+  width: 97%;
+  /* height: 95%; */
+  /* width: 30%; */
+}
+.project h2 { display: inline; margin-top: 0px; }
+
+#projects-tab {
+  /* display: flex; */
+  overflow: scroll;
+}
+
+#photos-tab {
+  /* display: flex; */
+  overflow: scroll;
+}
+#photos-tab img { border: 1px solid #ffffff; height: auto; width: 24%; }
