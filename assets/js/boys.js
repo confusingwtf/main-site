@@ -9,7 +9,7 @@ const BOYKISSER = '<img src="assets/img/boykisser.svg" onclick="epicTogle = !epi
 const RANDOMIMAGE = '<img src="{BASEDIRPLACEHOLDER}/{RANDOMIMAGEPLACEHOLDER}" width="75" style="float: right"></img>';
 // could add var onvidend, return in setupelem so rolls cant happen until vid finished, maybe setup dict, certain longer vids can be skipped/rerolled and ignore var some cant some loop
 //poster="{BASEDIRPLACEHOLDER}/{RANDOMPOSTERPLACEHOLDER}"
-const RANDOMVID = '<video id="funni-vid" autoplay meow onloadstart="this.volume=0.3;lastVidEnded=false" src="{BASEDIRPLACEHOLDER}/{RANDOMVIDPLACEHOLDER}" poster="/assets/img/spiny.gif" width="125" style="float: right"></video>';
+const RANDOMVID = '<video id="funni-vid" autoplay meow controls onloadstart="this.volume=0.3;lastVidEnded=false" src="{BASEDIRPLACEHOLDER}/{RANDOMVIDPLACEHOLDER}" poster="/assets/img/spiny.gif" width="125" style="float: right"></video>';
 var clicked = false;
 
 var missedCombo = 0;
