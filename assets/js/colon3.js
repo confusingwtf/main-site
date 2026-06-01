@@ -14,12 +14,12 @@ debugLog = (...args) => (DEBUG) ? console.log(...args) : undefined
 
 // inspired by insect.christmas | speed is stolen and stealed from there
 const divContainer = document.getElementById("trail-container");
-const mainTable = document.getElementById("main-table");
+const mainTable = document.getElementById("profile-table");
 const randomChance = Math.floor(Math.random() * 1000);
 
 // configureationndagion
 var TRAILCONTENT = ":3";
-var TRAILAMOUNT = 70;
+var TRAILAMOUNT = 30;
 const idleFramesThreshold = 100//100;
 
 var curSpeed = 0;
@@ -138,16 +138,16 @@ var posReplacementDVD = (index, target, pos, speed, totalFrames) => {
   }
 
   if (enableTableBounds) {
-    var tableBounds = mainTable.getBoundingClientRect();
+    // var tableBounds = mainTable.getBoundingClientRect();
 
     // && pos.y < top && pos.y > bottom
-    if (pos.x > tableBounds.left && pos.x < tableBounds.right && pos.y > tableBounds.top && pos.y < tableBounds.bottom) {
-      velocity = {x: (pos.x >= tableBounds.left) ? (-Math.abs(velocity.x)) : Math.abs(velocity.x), y: (pos.y >= tableBounds.top) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
-      debugLog();
+    // if (pos.x > tableBounds.left && pos.x < tableBounds.right && pos.y > tableBounds.top && pos.y < tableBounds.bottom) {
+    //   velocity = {x: (pos.x >= tableBounds.left) ? (-Math.abs(velocity.x)) : Math.abs(velocity.x), y: (pos.y >= tableBounds.top) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
+    //   debugLog();
       
-      // ohhh its so damp :333
-      // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
-    }
+    //   // ohhh its so damp :333
+    //   // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
+    // }
   }
 
   debugLog(`${index}: ${pos.x}/${velocity.x}, ${pos.y}/${velocity.y} | ${screen.availHeight}`)
@@ -250,17 +250,7 @@ function update() {
       // idleFrames = 0;
     }
 
-    var tableBounds = mainTable.getBoundingClientRect();
-    if (target.x > tableBounds.left && target.x < tableBounds.right && target.y > tableBounds.top && target.y < tableBounds.bottom) {
-      velocity = {x: velocity.x, y: (target.y >= tableBounds.left) ? (-Math.abs(velocity.y)) : Math.abs(velocity.y)}
-      // console.log("meow | bounds hit")
-      
-      // ohhh its so damp :333
-      // velocity = {x: velocity.x * DAMPANEING, y: velocity.y * DAMPANEING}
-    }
-  
     // pos = {x: target.x += velocity.x, y: target.y += velocity.y};
-
     pos = applyPos(index, target, pos, speed, totalFrames)
     
     
