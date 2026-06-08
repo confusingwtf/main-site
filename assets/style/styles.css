@@ -63,6 +63,7 @@ textarea, textarea:focus {
   flex-direction: column;
   width: fit-content;
   height: fit-content;
+  margin: auto;
 }
 /* .activity-container {
   margin: 15px 0px;
@@ -88,6 +89,12 @@ textarea, textarea:focus {
   padding: 50px;
   z-index: 1;
   display: flex;
+  overflow: scroll;
+}
+@media (max-width: 1000px) {
+  .main {
+    flex-direction: column;
+  }
 }
 
 .ascii {
@@ -167,11 +174,11 @@ td:empty {
 
 .webring-container {
   /* margin: 0 45%; */
-  width: 100%;
-  position: fixed;
+  /* width: 100%; */
+  /* position: fixed; */
   display: grid;
   justify-items: center;
-  bottom: 2%;
+  /* bottom: 2%; */
 }
 
 
@@ -296,7 +303,8 @@ td:empty {
 
 .ring {
     margin: auto;
-    margin-top: 43.6%;
+    /* margin-top: 43.6%; */
+    /* margin-top: 835px; */
     text-align: center;
     color: #666;
 }
@@ -333,3 +341,4 @@ td:empty {
   overflow: scroll;
 }
 #photos-tab img { border: 1px solid #ffffff; height: auto; width: 24%; }
+#photos-tab video { border: 1px solid #ffffff; height: auto; width: 24%; }

@@ -168,16 +168,17 @@ function runRand(num, first = true) {
       randomPosOffset.y = () => { let rand = Math.random() * 0.1; return Math.random() > 0.5 ? rand : -rand};
       break;
     case 69:
-      PLACEHOLDER = '<img src="assets/img/boykisser.svg" width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</img>';
+      PLACEHOLDER = '<img src="assets/img/boykisser.svg" width="75" class="trail"></img>';
       // CONSTSPEED = 2;
-      TRAILAMOUNT = TRAILAMOUNT;
-      TRAILCONTENT = "";
       break;
     case 444:
       TRAILAMOUNT = 220;
       break;
+    case 808:
+      PLACEHOLDER = '<img src="assets/gallery/kobl.gif" width="100" class="trail"></img>';
+      break;
     default:
-      PLACEHOLDER = '<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
+      PLACEHOLDER = DEFAULTELEMENT; //'<div width="75" class="trail">{TRAILCONTENTPLACEHOLDER}</div>';
       TRAILCONTENT = ":3";
       // speedReplacement = null;
       randomPosOffset = {x: () => 0, y: () => 0};
